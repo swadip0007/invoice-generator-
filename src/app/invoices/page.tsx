@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { supabase } from "@/lib/supabase";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
+import { useAuth } from "@/context/AuthContext";
 
 interface Invoice {
   id: string;
@@ -16,21 +17,20 @@ interface Invoice {
 
 export default function InvoicesPage() {
   const router = useRouter();
+  const { user, loading: authLoading } = useAuth();
   const [invoices, setInvoices] = useState<Invoice[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    if (authLoading) return;
+
+    if (!user) {
+      router.push("/login");
+      return;
+    }
+
     const fetchInvoices = async () => {
       try {
-        const {
-          data: { user },
-        } = await supabase.auth.getUser();
-
-        if (!user) {
-          router.push("/login");
-          return;
-        }
-
         const { data, error } = await supabase
           .from("invoices")
           .select("id, invoice_number, invoice_date, client_name, total, created_at")
@@ -50,7 +50,7 @@ export default function InvoicesPage() {
     };
 
     fetchInvoices();
-  }, [router]);
+  }, [user, authLoading, router]);
 
   return (
     <main className="min-h-screen bg-gray-100">
@@ -94,7 +94,7 @@ export default function InvoicesPage() {
           </Link>
         </div>
 
-        {loading ? (
+        {authLoading || loading ? (
           <div className="rounded-xl bg-white p-12 text-center shadow-sm">
             <p className="text-gray-500">Loading invoices...</p>
           </div>
@@ -102,7 +102,7 @@ export default function InvoicesPage() {
           <div className="rounded-xl bg-white p-12 text-center shadow-sm border border-gray-200">
             <h3 className="text-lg font-semibold text-gray-900">No invoices found</h3>
             <p className="mt-2 text-sm text-gray-500">
-              You haven't generated any invoices yet.
+              You haven&apos;t generated any invoices yet.
             </p>
             <Link
               href="/invoices/create"

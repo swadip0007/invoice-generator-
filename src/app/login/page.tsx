@@ -32,7 +32,7 @@ export default function LoginPage() {
       }
 
       router.push("/dashboard");
-    } catch (error) {
+    } catch {
       setError("Something went wrong. Please try again.");
     } finally {
       setLoading(false);
@@ -100,7 +100,7 @@ export default function LoginPage() {
         </form>
 
         <p className="mt-6 text-center text-sm text-gray-600">
-          Don't have an account?{" "}
+          Don&apos;t have an account?{" "}
           <a
             href="/register"
             className="font-semibold text-blue-600 hover:underline"

@@ -9,7 +9,7 @@ export default function Home() {
           <Link href="/" className="text-2xl font-bold text-blue-600 hover:opacity-90 transition">
             Invoice<span className="text-gray-900">Gen</span>
           </Link>
-
+  
           <div className="flex items-center gap-4">
             <Link
               href="/login"

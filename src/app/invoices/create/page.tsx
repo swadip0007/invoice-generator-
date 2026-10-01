@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { supabase } from "@/lib/supabase";
+import { useAuth } from "@/context/AuthContext";
 
 interface InvoiceItem {
   id: number;
@@ -14,6 +15,7 @@ interface InvoiceItem {
 
 export default function CreateInvoicePage() {
   const router = useRouter();
+  const { user } = useAuth();
 
   const [invoiceNumber, setInvoiceNumber] = useState("");
   const [invoiceDate, setInvoiceDate] = useState("");
@@ -22,7 +24,7 @@ export default function CreateInvoicePage() {
 
   const [items, setItems] = useState<InvoiceItem[]>([
     {
-      id: Date.now(),
+      id: 1,
       itemName: "",
       quantity: 1,
       price: 0,
@@ -134,13 +136,8 @@ export default function CreateInvoicePage() {
     setSaving(true);
 
     try {
-      // 1. Get logged-in user
-      const {
-        data: { user },
-        error: userError,
-      } = await supabase.auth.getUser();
-
-      if (userError || !user) {
+      // 1. Validate logged-in user
+      if (!user) {
         setError("You must be logged in to create an invoice.");
         return;
       }

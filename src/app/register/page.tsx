@@ -59,7 +59,7 @@ export default function RegisterPage() {
       setTimeout(() => {
         router.push("/login");
       }, 1000);
-    } catch (error) {
+    } catch {
       setError("Something went wrong.");
     } finally {
       setLoading(false);
